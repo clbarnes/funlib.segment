@@ -1,5 +1,6 @@
 from setuptools import setup
 from setuptools.extension import Extension
+import sysconfig
 from Cython.Build import cythonize
 import numpy as np
 
@@ -11,6 +12,12 @@ requirements = [
     "scikit-image",
     "cython",
     "zarr",
+]
+
+include_dirs = [
+    np.get_include(),
+    sysconfig.get_config_var('LIBDIR'),
+    sysconfig.get_config_var('INCLUDEDIR')
 ]
 
 setup(
@@ -35,7 +42,7 @@ setup(
                     'funlib/segment/arrays/impl/replace_values_inplace.pyx'
                 ],
                 extra_compile_args=['-O3'],
-                include_dirs=[np.get_include()],
+                include_dirs=include_dirs,
                 language='c++'),
             Extension(
                 'funlib.segment.arrays.impl.find_components',
@@ -44,7 +51,7 @@ setup(
                     'funlib/segment/arrays/impl/find_components_impl.cpp',
                 ],
                 extra_compile_args=['-O3', '-std=c++11'],
-                include_dirs=[np.get_include()],
+                include_dirs=include_dirs,
                 language='c++'),
             Extension(
                 'funlib.segment.graphs.impl.connected_components',
@@ -53,7 +60,7 @@ setup(
                     'funlib/segment/graphs/impl/connected_components_impl.cpp'
                 ],
                 extra_compile_args=['-O3', '-std=c++11'],
-                include_dirs=[np.get_include()],
+                include_dirs=include_dirs,
                 language='c++')
         ]),
         install_requires=requirements,
